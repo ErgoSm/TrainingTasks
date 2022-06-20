@@ -2,7 +2,7 @@
 {
     internal sealed class Leaderboard
     {
-        private Dictionary<string, int> _entityLinks = new Dictionary<string, int>();
+        private Dictionary<string, Entity> _entityLinks = new Dictionary<string, Entity>();
         private List<Entity> _entities = new List<Entity>();
         private int _index;
 
@@ -14,7 +14,14 @@
         internal void Update(string id, int score)
         {
             if (_entityLinks.ContainsKey(id))
-                _entities[_entityLinks[id]].Score = score;
+            {
+                var entity = _entityLinks[id];
+
+                _index = FindPlace(0, _entities.Count, score);
+                _entities.Remove(_entityLinks[id]);
+                _entityLinks[id].Score = score;
+                _entities.Insert(_index, entity);
+            }
             else
             {
                 if (_entities.Count == 0)
@@ -22,8 +29,9 @@
                 else
                     _index = FindPlace(0, _entities.Count, score);
 
-                _entities.Insert(_index, new Entity { Id = id, Score = score });
-                _entityLinks.Add(id, _index);
+                var newEntity = new Entity { Id = id, Score = score };
+                _entities.Insert(_index, newEntity);
+                _entityLinks.Add(id, newEntity);
             }
         }
 

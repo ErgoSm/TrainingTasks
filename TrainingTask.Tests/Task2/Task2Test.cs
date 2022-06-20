@@ -27,5 +27,11 @@ namespace TrainingTask.Tests.Task2
 
             Assert.Equal(size, _set.Count);
         }
+
+        [Fact]
+        public void Compare_with_object()
+        {
+            Assert.False(new User().Equals(new object()));
+        }
     }
 }

@@ -11,12 +11,14 @@ namespace TrainingTasks.Task2
         public override bool Equals(object? obj)
         {
             var other = obj as User;
-            return FirstName == other?.FirstName && LastName == other.LastName && DateOfBirth == other.DateOfBirth && INN == other.INN;
+            if (obj == null || other == null) return false;
+
+            return FirstName == other.FirstName && LastName == other.LastName && DateOfBirth == other.DateOfBirth && INN == other.INN;
         }
 
         public static bool operator ==(User a, User b)
         {
-            return a.Equals(b);
+            return (object)a == null && (object)b == null || a.Equals(b);
         }
 
         public static bool operator !=(User a, User b)

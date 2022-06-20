@@ -9,8 +9,7 @@ namespace TrainingTasks.Task1
     internal sealed class CustomStack<T>
     {
         private Queue<T> _mainQueue = new Queue<T>();
-        private Queue<T> _secondQueue = new Queue<T>();
-        private Queue<T> _queueTmp;
+        private List<T> _list = new List<T> ();
 
         public void Push(T item)
         {
@@ -19,15 +18,16 @@ namespace TrainingTasks.Task1
 
         public T Pop()
         {
+            _list.Clear ();
             var size = _mainQueue.Count;
             for(int i = 0; i < size - 1; i++)
-                _secondQueue.Enqueue(_mainQueue.Dequeue());
+                _list.Add(_mainQueue.Dequeue());
 
             var result = _mainQueue.Dequeue();
 
-            _queueTmp = _mainQueue;
-            _mainQueue = _secondQueue;
-            _secondQueue = _queueTmp;
+            foreach (var item in _list)
+                _mainQueue.Enqueue(item);
+
 
             return result;
         }

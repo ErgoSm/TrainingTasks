@@ -35,6 +35,30 @@ namespace TrainingTask.Tests.Task3
         }
 
         [Fact]
+        public void Leaderboard_update()
+        {
+            var sorted = new List<int>();
+            var leaderboardList = new List<Entity>();
+
+
+            for (int i = 0; i < 10; i++)
+            {
+                _leaderboard.Update(i.ToString(), i);
+            }
+
+            sorted = _leaderboard.GetAll().Select(x => x.Score).ToList();
+            sorted.RemoveAt(4);
+            sorted.Insert(0, 100);
+
+            _leaderboard.Update("5", 100);
+            leaderboardList = _leaderboard.GetAll().ToList();
+
+
+            for (int i = 0; i < sorted.Count; i++)
+                Assert.Equal(sorted[i], leaderboardList[i].Score);
+        }
+
+        [Fact]
         public void Simple_benchmark_test()
         {
             var sorted = new List<Entity>();
