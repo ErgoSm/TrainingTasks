@@ -62,6 +62,24 @@ namespace TrainingTask.Tests.Task3
         }
 
         [Fact]
+        public void Leaderboard_additional_update()
+        {
+            var sorted = new List<int>() { 100, 10, 0 };
+            var leaderboardList = new List<Entity>();
+
+
+            _leaderboard.Update("x", 100);
+            _leaderboard.Update("y", 10);
+            _leaderboard.Update("z", 1);
+            _leaderboard.Update("z", 0);
+            leaderboardList = _leaderboard.GetAll().ToList();
+
+
+            for (int i = 0; i < sorted.Count; i++)
+                Assert.Equal(sorted[i], leaderboardList[i].Score);
+        }
+
+        [Fact]
         public void Simple_benchmark_test()
         {
             var sorted = new List<Entity>();

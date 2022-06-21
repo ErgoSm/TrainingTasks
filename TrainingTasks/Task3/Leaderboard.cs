@@ -17,8 +17,9 @@
             {
                 var entity = _entityLinks[id];
 
-                _index = FindPlace(0, _entities.Count, score);
                 _entities.Remove(_entityLinks[id]);
+
+                _index = FindPlace(0, _entities.Count, score);
                 _entityLinks[id].Score = score;
                 _entities.Insert(_index, entity);
             }
