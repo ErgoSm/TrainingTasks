@@ -49,8 +49,11 @@ namespace TrainingTask.Tests.Task3
             sorted = _leaderboard.GetAll().Select(x => x.Score).ToList();
             sorted.RemoveAt(4);
             sorted.Insert(0, 100);
+            sorted.RemoveAt(3);
+            sorted.Insert(1, 9);
 
             _leaderboard.Update("5", 100);
+            _leaderboard.Update("7", 9);
             leaderboardList = _leaderboard.GetAll().ToList();
 
 
