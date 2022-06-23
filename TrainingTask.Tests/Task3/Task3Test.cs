@@ -9,11 +9,15 @@ namespace TrainingTask.Tests.Task3
 {
     public class Task3Test
     {
-        private Leaderboard _leaderboard = new Leaderboard();
+        private LeaderboardClass _leaderboard = new LeaderboardLL();
 
-        [Fact]
-        public void Leaderboard_returns_sorted_list()
+        [Theory]
+        [InlineData(typeof(Leaderboard))]
+        [InlineData(typeof(LeaderboardLL))]
+        public void Leaderboard_returns_sorted_list(Type leaderboardType)
         {
+            _leaderboard = (LeaderboardClass)Activator.CreateInstance(leaderboardType);
+
             var sorted = new List<Entity>();
             var leaderboardList = new List<Entity>();
             var rnd = new Random();
@@ -34,9 +38,13 @@ namespace TrainingTask.Tests.Task3
                 Assert.Equal(sorted[i].Score, leaderboardList[i].Score);
         }
 
-        [Fact]
-        public void Leaderboard_update()
+        [Theory]
+        [InlineData(typeof(Leaderboard))]
+        [InlineData(typeof(LeaderboardLL))]
+        public void Leaderboard_update(Type leaderboardType)
         {
+            _leaderboard = (LeaderboardClass)Activator.CreateInstance(leaderboardType);
+
             var sorted = new List<int>();
             var leaderboardList = new List<Entity>();
 
@@ -61,9 +69,13 @@ namespace TrainingTask.Tests.Task3
                 Assert.Equal(sorted[i], leaderboardList[i].Score);
         }
 
-        [Fact]
-        public void Leaderboard_additional_update()
+        [Theory]
+        [InlineData(typeof(Leaderboard))]
+        [InlineData(typeof(LeaderboardLL))]
+        public void Leaderboard_additional_update(Type leaderboardType)
         {
+            _leaderboard = (LeaderboardClass)Activator.CreateInstance(leaderboardType);
+
             var sorted = new List<int>() { 100, 10, 0 };
             var leaderboardList = new List<Entity>();
 
@@ -79,9 +91,13 @@ namespace TrainingTask.Tests.Task3
                 Assert.Equal(sorted[i], leaderboardList[i].Score);
         }
 
-        [Fact]
-        public void Simple_benchmark_test()
+        [Theory]
+        [InlineData(typeof(Leaderboard))]
+        [InlineData(typeof(LeaderboardLL))]
+        public void Simple_benchmark_test(Type leaderboardType)
         {
+            _leaderboard = (LeaderboardClass)Activator.CreateInstance(leaderboardType);
+
             var sorted = new List<Entity>();
             var rnd = new Random();
             var sw = new Stopwatch();

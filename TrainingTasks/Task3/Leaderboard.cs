@@ -1,17 +1,23 @@
 ﻿namespace TrainingTasks
 {
-    internal sealed class Leaderboard
+    internal abstract class LeaderboardClass
+    {
+        internal abstract IEnumerable<Entity> GetAll();
+        internal abstract void Update(string id, int score);
+    }
+
+    internal sealed class Leaderboard : LeaderboardClass
     {
         private Dictionary<string, Entity> _entityLinks = new Dictionary<string, Entity>();
         private List<Entity> _entities = new List<Entity>();
         private int _index;
 
-        internal IEnumerable<Entity> GetAll()
+        internal override IEnumerable<Entity> GetAll()
         {
             return _entities;
         }
 
-        internal void Update(string id, int score)
+        internal override void Update(string id, int score)
         {
             if (_entityLinks.ContainsKey(id))
             {
