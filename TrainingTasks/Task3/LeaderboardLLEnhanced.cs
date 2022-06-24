@@ -12,10 +12,10 @@ namespace TrainingTasks
         private LinkedList<Entity> _entities = new LinkedList<Entity>();
         private LinkedListNode<Entity> _entityNode;
         private LinkedListNode<Entity> _prevNode;
-        private int _mathExp = 10000 / 2;
-        private int _count;
+        private int _sum = 0;
+        private int _mathExp = 0; // 10000 / 2;
+        private int _currentDiff = 10000 / 2;
 
-        internal override int IterationsCount => _count;
 
         public LeaderboardLLEnhanced()
         {
@@ -45,10 +45,15 @@ namespace TrainingTasks
                 _entityLinks.Add(id, Insert(_prevNode, newEntity, score));
             }
 
-            if (_prevNode == null)
+            _sum += score;
+            _mathExp = _sum / _entities.Count;
+
+            if(_currentDiff > Math.Abs(_mathExp - score))
+            {
                 _prevNode = _entityNode;
-            else if(Math.Abs(_mathExp - _prevNode.Value.Score) > Math.Abs(_mathExp - score)) 
-                _prevNode = _entityNode;
+                _currentDiff = Math.Abs(_mathExp - score);
+            }
+                
         }
 
         private LinkedListNode<Entity> Insert(LinkedListNode<Entity> startNode, Entity entity, int score)

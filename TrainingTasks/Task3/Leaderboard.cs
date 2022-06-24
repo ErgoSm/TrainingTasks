@@ -2,7 +2,8 @@
 {
     internal abstract class LeaderboardClass
     {
-        internal abstract int IterationsCount { get; }
+        protected int _count;
+        internal int IterationsCount => _count;
         internal abstract IEnumerable<Entity> GetAll();
         internal abstract void Update(string id, int score);
     }
@@ -12,8 +13,6 @@
         private Dictionary<string, Entity> _entityLinks = new Dictionary<string, Entity>();
         private List<Entity> _entities = new List<Entity>();
         private int _index;
-
-        internal override int IterationsCount => throw new NotImplementedException();
 
         internal override IEnumerable<Entity> GetAll()
         {
