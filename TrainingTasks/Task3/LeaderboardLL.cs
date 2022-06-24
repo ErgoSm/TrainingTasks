@@ -5,6 +5,9 @@
         private Dictionary<string, LinkedListNode<Entity>> _entityLinks = new Dictionary<string, LinkedListNode<Entity>>();
         private LinkedList<Entity> _entities = new LinkedList<Entity>();
         private LinkedListNode<Entity> _entityNode;
+        private int _count;
+
+        internal override int IterationsCount => _count;
 
         internal override IEnumerable<Entity> GetAll()
         {
@@ -45,8 +48,10 @@
         private LinkedListNode<Entity> GetNearestSmallerEntity(LinkedListNode<Entity> startEntity, int score)
         {
             while (startEntity != null && startEntity.Value.Score > score)
+            {
                 startEntity = startEntity.Next;
-                
+                _count++;
+            }
 
             return startEntity;
         }

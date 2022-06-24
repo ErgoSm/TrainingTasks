@@ -14,6 +14,7 @@ namespace TrainingTask.Tests.Task3
         [Theory]
         [InlineData(typeof(Leaderboard))]
         [InlineData(typeof(LeaderboardLL))]
+        [InlineData(typeof(LeaderboardLLEnhanced))]
         public void Leaderboard_returns_sorted_list(Type leaderboardType)
         {
             _leaderboard = (LeaderboardClass)Activator.CreateInstance(leaderboardType);
@@ -41,6 +42,7 @@ namespace TrainingTask.Tests.Task3
         [Theory]
         [InlineData(typeof(Leaderboard))]
         [InlineData(typeof(LeaderboardLL))]
+        [InlineData(typeof(LeaderboardLLEnhanced))]
         public void Leaderboard_update(Type leaderboardType)
         {
             _leaderboard = (LeaderboardClass)Activator.CreateInstance(leaderboardType);
@@ -72,6 +74,7 @@ namespace TrainingTask.Tests.Task3
         [Theory]
         [InlineData(typeof(Leaderboard))]
         [InlineData(typeof(LeaderboardLL))]
+        [InlineData(typeof(LeaderboardLLEnhanced))]
         public void Leaderboard_additional_update(Type leaderboardType)
         {
             _leaderboard = (LeaderboardClass)Activator.CreateInstance(leaderboardType);
@@ -94,6 +97,7 @@ namespace TrainingTask.Tests.Task3
         [Theory]
         [InlineData(typeof(Leaderboard))]
         [InlineData(typeof(LeaderboardLL))]
+        [InlineData(typeof(LeaderboardLLEnhanced))]
         public void Simple_benchmark_test(Type leaderboardType)
         {
             _leaderboard = (LeaderboardClass)Activator.CreateInstance(leaderboardType);
@@ -124,6 +128,44 @@ namespace TrainingTask.Tests.Task3
             option2 = sw.Elapsed.TotalMilliseconds;
 
             Assert.True(option1 < option2);
+        }
+
+        [Fact]
+        public void LL_implementation_comparison_benchmark_test()
+        {
+            _leaderboard = new LeaderboardLL();
+            var _leaderboardEnh = new LeaderboardLLEnhanced();
+
+            var n = 10000;
+            var values = new List<int>();
+            var rnd = new Random();
+            var sw = new Stopwatch();
+            var option1 = 0.0;
+            var option2 = 0.0;
+
+            for (var i = 0; i < n; i++)
+                values.Add(rnd.Next(10000));
+
+            sw.Start();
+            for (var i = 0; i < n; i++)
+            {
+                _leaderboard.Update(i.ToString(), values[i]);
+                _leaderboard.GetAll().ToArray();
+            }
+            sw.Stop();
+            option1 = sw.Elapsed.TotalMilliseconds;
+
+            sw.Start();
+            for (var i = 0; i < n; i++)
+            {
+                _leaderboardEnh.Update(i.ToString(), values[i]);
+                _leaderboardEnh.GetAll().ToArray();
+            }
+            sw.Stop();
+            option2 = sw.Elapsed.TotalMilliseconds;
+
+            Assert.True(option1 > option2);
+            Assert.True(_leaderboard.IterationsCount > _leaderboardEnh.IterationsCount);
         }
     }
 }
