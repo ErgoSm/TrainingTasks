@@ -112,17 +112,17 @@ namespace TrainingTask.Tests.Task3
             sw.Start();
             for (var i = 0; i < 10000; i++)
             {
-                _leaderboard.Update(i.ToString(), rnd.Next());
+                _leaderboard.Update(i.ToString(), rnd.Next(10000));
                 _leaderboard.GetAll().ToArray();
             }
             sw.Stop();
             option1 = sw.Elapsed.TotalMilliseconds;
 
-            sw.Start();
+            sw.Restart();
             for (var i = 0; i < 10000; i++)
             {
                 sorted.Add(new Entity { Id = i.ToString(), Score = rnd.Next() });
-                sorted.ToArray();
+                sorted.Sort();
             }
             sw.Stop();
             option2 = sw.Elapsed.TotalMilliseconds;
@@ -140,6 +140,7 @@ namespace TrainingTask.Tests.Task3
             var values = new List<int>();
             var rnd = new Random();
             var sw = new Stopwatch();
+            var sw1 = new Stopwatch();
             var option1 = 0.0;
             var option2 = 0.0;
 
@@ -155,7 +156,7 @@ namespace TrainingTask.Tests.Task3
             sw.Stop();
             option1 = sw.Elapsed.TotalMilliseconds;
 
-            sw.Start();
+            sw.Restart();
             for (var i = 0; i < n; i++)
             {
                 _leaderboardEnh.Update(i.ToString(), values[i]);
@@ -164,7 +165,7 @@ namespace TrainingTask.Tests.Task3
             sw.Stop();
             option2 = sw.Elapsed.TotalMilliseconds;
 
-            //Assert.True(option1 > option2);
+            Assert.True(option1 > option2);
             Assert.True(_leaderboardOld.IterationsCount > _leaderboardEnh.IterationsCount);
         }
     }

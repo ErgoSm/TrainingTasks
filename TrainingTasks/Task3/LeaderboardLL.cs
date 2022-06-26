@@ -18,10 +18,11 @@
             {
                 var entity = _entityLinks[id];
 
-                _entities.Remove(entity);
+                
                 entity.Value.Score = score;
 
                 Insert(_entities.First, entity.Value, score);
+                _entities.Remove(entity);
             }
             else
             {

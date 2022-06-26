@@ -62,10 +62,15 @@
 
     
 
-    internal sealed class Entity
+    internal sealed class Entity : IComparable<Entity>
     {
         public string Id { get; set; }
         public int Score { get; set; }
+
+        public int CompareTo(Entity? other)
+        {
+            return Score == other?.Score ? 0 : Score > other?.Score ? 1 : -1;
+        }
     }
 
     internal class EntityComparer : IComparer<Entity>

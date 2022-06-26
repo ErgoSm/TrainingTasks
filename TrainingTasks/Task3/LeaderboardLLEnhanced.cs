@@ -16,13 +16,6 @@ namespace TrainingTasks
         private int _mathExp = 0; // 10000 / 2;
         private int _currentDiff = 10000 / 2;
 
-
-        public LeaderboardLLEnhanced()
-        {
-            _entityNode = _entities.First;
-            _prevNode = _entities.First;
-        }
-
         internal override IEnumerable<Entity> GetAll()
         {
             return _entities;
