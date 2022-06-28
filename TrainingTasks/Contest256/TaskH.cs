@@ -11,6 +11,7 @@ string result = "YES";
 
 for (int k = 0; k < t; k++)
 {
+    result = "YES";
     input = Console.ReadLine().Split(' ');
     n = Convert.ToInt16(input[0]);
     m = Convert.ToInt16(input[1]);
@@ -51,7 +52,7 @@ for (int k = 0; k < t; k++)
             {
                 var newCorner = new Corner(j, i, check);
                 corners.Add(newCorner);
-                occupiedFields[i][j] = 1;
+                //occupiedFields[i][j] = 1;
                 if (!FillAround(newCorner))
                 {
                     result = "NO";
@@ -91,7 +92,12 @@ for (int k = 0; k < t; k++)
         }
     }
 
+    var numberOfOccupied = 0;
+    foreach (var row in occupiedFields.Values)
+        numberOfOccupied += row.Values.Where(x => x == 1).Count();
 
+    if (ships.Sum() != numberOfOccupied)
+        result = "NO";
 
     Console.WriteLine(result);
     if (result == "YES")
@@ -157,13 +163,28 @@ bool CheckAndFill(int x, int y)
     return true;
 }
 
+void FillOccupied(int x, int y, int value)
+{
+    if (x >= 0 && x < m && y >= 0 && y < n)
+        occupiedFields[y][x] = value;
+}
+
 int CheckCorner(int y, int x)
 {
-    var current = field[y][x] == '*';
+    bool current = field[y][x] == '*';
+    FillOccupied(x, y, current ? 1 : 0);
+
     var left = x > 0 && field[y][x - 1] == '*';
+    FillOccupied(x - 1, y, left ? 1 : 0);
+
     var right = (x < m - 1) && field[y][x + 1] == '*';
+    FillOccupied(x + 1, y, right ? 1 : 0);
+
     var up = y > 0 && field[y - 1][x] == '*';
+    FillOccupied(x, y - 1, up ? 1 : 0);
+
     var bottom = (y < n - 1) && field[y + 1][x] == '*';
+    FillOccupied(x, y + 1, bottom ? 1 : 0);
 
 
     if (current)
@@ -216,14 +237,14 @@ int CountDecks(int yStart, int xStart, int rotation)
 
         if (xDeck)
         {
-            occupiedFields[yStart][nextX] = 1;
+            //occupiedFields[yStart][nextX] = 1;
             result &= CheckAndFill(nextX, yStart + 1);
             result &= CheckAndFill(nextX, yStart - 1);
         }
 
         if (yDeck)
         {
-            occupiedFields[nextY][xStart] = 1;
+            //occupiedFields[nextY][xStart] = 1;
             result &= CheckAndFill(xStart - 1, nextY);
             result &= CheckAndFill(xStart + 1, nextY);
         }
