@@ -148,10 +148,10 @@ bool CheckAndFill(int x, int y)
 {
     if (x >= 0 && x < m && y >= 0 && y < n)
     {
-        if (occupiedFields[y][x] == 1) //Deck
+        if (occupiedFields[y][x] == 1)
             return false;
 
-        occupiedFields[y][x] = 2; //Near the deck
+        occupiedFields[y][x] = 2;
     }
 
     return true;
@@ -159,17 +159,23 @@ bool CheckAndFill(int x, int y)
 
 int CheckCorner(int y, int x)
 {
-    if (field[y][x] != '*' && field[y][x] != '.')
-        return -1;
-
     var current = field[y][x] == '*';
     var left = x > 0 && field[y][x - 1] == '*';
     var right = (x < m - 1) && field[y][x + 1] == '*';
     var up = y > 0 && field[y - 1][x] == '*';
     var bottom = (y < n - 1) && field[y + 1][x] == '*';
 
+
     if (current)
     {
+        var cnt = left ? 1 : 0;
+        cnt += right ? 1 : 0;
+        cnt += up ? 1 : 0;
+        cnt += bottom ? 1 : 0;
+
+        if (cnt > 2)
+            return -1;
+
         if (bottom && right && !left && !up)
             return 360;
         else if (bottom && left && !right && !up)
