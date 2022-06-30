@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+﻿/*using System.Text.RegularExpressions;
 var number = Convert.ToInt32(Console.ReadLine());
 var regex = new Regex(@"(\-|\d|\w)+");
 for (int i = 0; i < number; i++)
@@ -27,4 +27,4 @@ for (int i = 0; i < number; i++)
     }
 
     Console.WriteLine();
-}
+}*/

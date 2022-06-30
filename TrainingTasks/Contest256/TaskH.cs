@@ -1,4 +1,4 @@
-﻿var t = Convert.ToInt32(Console.ReadLine());
+﻿/*var t = Convert.ToInt32(Console.ReadLine());
 
 List<string> field;
 Dictionary<int, Dictionary<int, int>> occupiedFields;
@@ -266,4 +266,4 @@ int CountDecks(int yStart, int xStart, int rotation)
     return result && !xDeck && !yDeck ? (counter - 1) * 2 - 1 : -1;
 }
 
-public record Corner(int x, int y, int rotate);
+public record Corner(int x, int y, int rotate);*/
