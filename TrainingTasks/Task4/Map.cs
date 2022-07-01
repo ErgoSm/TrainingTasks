@@ -1,48 +1,33 @@
 ﻿namespace TrainingTasks.Task4
 {
-    internal record Flat(int X, int Y, int Price) : IComparable
-    {
-        public int CompareTo(object? obj)
-        {
-            var flat = obj as Flat;
-            return Price == flat?.Price ? 0 : Price > flat.Price ? 1 : -1;
-        }
-    }
-
-    internal record SquareParameters(double X, double Y, double Size, int NumberOnLevel);
-
     internal sealed class Map
     {
-        private readonly int _fieldSize = 1000;
-        private readonly int _flatsNumber = 20000;
+        private readonly MapInitializer _initializer;
 
         private Square _square;
         private Dictionary<int, Flat> _flats = new Dictionary<int, Flat>();
 
-        private Func<Flat, int, int> _diff => (flat, price) => Math.Abs(flat.Price - price);
+        private Func<Flat, Flat, int, bool> _less => (flatOne, flatTwo, price) => Math.Abs(flatOne.Price - price) < Math.Abs(flatTwo.Price - price);
 
-        internal Map()
+        internal Map(MapInitializer initializer)
         {
-            var rnd = new Random();
+            _initializer = initializer;
 
-            for (int i = 0; i < _flatsNumber; i++)
-                _flats.Add(i, new Flat(rnd.Next(1000), rnd.Next(1000), rnd.Next(1000000, 40000000)));
-
-            _square = new Square(new SquareParameters(0, 0, 1000, 50), _flats.Values);
+            _square = new Square(new SquareParameters(0, 0, 1000, 50), _initializer.GetFlats());
         }
 
         //Returns the maxObjects-most relevant Flats
         internal IEnumerable<Flat> GetView(int x, int y, byte zoomLevel, int targetPrice, int maxObjects)
         {
-            maxObjects = maxObjects > _flatsNumber ? _flatsNumber : maxObjects;
+            maxObjects = maxObjects > _initializer.FlatsNumber ? _initializer.FlatsNumber : maxObjects;
             var relevantFlats = new List<Flat>();
 
             //Find squares
-            var squareHalfSize = (_fieldSize - zoomLevel * 100) / 2;
+            var squareHalfSize = (_initializer.FieldSize - zoomLevel * 100) / 2;
             var visibleSquares = GetVisibleSquares(y - squareHalfSize >= 0 ? y - squareHalfSize : 0,
                                                    x - squareHalfSize >= 0 ? x - squareHalfSize : 0,
-                                                   y + squareHalfSize <= _fieldSize ? y + squareHalfSize : _fieldSize,
-                                                   x + squareHalfSize <= _fieldSize ? x + squareHalfSize : _fieldSize).ToList();
+                                                   y + squareHalfSize <= _initializer.FieldSize ? y + squareHalfSize : _initializer.FieldSize,
+                                                   x + squareHalfSize <= _initializer.FieldSize ? x + squareHalfSize : _initializer.FieldSize).ToList();
 
             //Sort
             var mergedList = visibleSquares.First().Flats.ToList();
@@ -63,7 +48,7 @@
             bool upSelected;
             while(n < maxObjects)
             {
-                if (_diff(list[upIndex], targetPrice) < _diff(list[downIndex], targetPrice))
+                if (_less(list[upIndex], list[downIndex], targetPrice))
                 {
                     relevantFlats.Add(list[upIndex]);
                     upSelected = true;
@@ -127,10 +112,9 @@
             return resultList;
         }
 
-        //TODO: implement the function
-        internal void UpdatePrice(int x, int y, int newPrice)
+        internal bool UpdatePrice(int x, int y, int newPrice)
         {
-
+            return _square.Update(x, y, newPrice);
         }
 
         //Minimization with the golden ratio method
@@ -142,7 +126,7 @@
 
             while (end - start > 2)
             {
-                if (_diff(flats[start], target) < _diff(flats[end], target))
+                if (_less(flats[start], flats[end], target))
                 {
                     current = start;
                     end = (int) (start + (end - start) * 0.618);
@@ -150,85 +134,15 @@
                 else
                 {
                     current = end;
-                    start = (int) Math.Ceiling(start + (end - start) * 0.382);
+                    start = (int) (start + (end - start) * 0.382);
                 }
             }
+
+            current = _less(flats[start], flats[end], target) ?
+                _less(flats[start], flats[start + 1], target) ? start : start + 1 :
+                _less(flats[start + 1], flats[end], target) ? start + 1 : end;
 
             return current;
-        }
-
-
-    }
-
-    internal sealed class Square
-    {
-        private double _xLeft;
-        private double _yTop;
-        private double _size;
-
-        //private Square _parent;
-        private ICollection<Square> _children;
-
-        public bool IsLeaf { get; private set; }
-        public List<Flat> Flats { get; private set; }
-
-        public Square(SquareParameters parameters, IEnumerable<Flat> flats)
-        {
-            _xLeft = parameters.X;
-            _yTop = parameters.Y;
-            _size = parameters.Size;
-
-            if(flats.Count() <= parameters.NumberOnLevel)
-            {
-                Flats = flats.ToList();
-                Flats.Sort();
-                IsLeaf = true;
-            }
-            else
-            {
-                _children = new List<Square>();
-                for(int i = 0; i < 4; i++)
-                {
-                    var newSize = _size / 2;
-                    var newParam = new SquareParameters(i % 2 == 0 ? _xLeft : _xLeft + newSize,
-                        i < 2 ? _yTop : _yTop + newSize, newSize, parameters.NumberOnLevel);
-
-                    _children.Add(new Square(newParam, flats.Where(f => f.X >= newParam.X && f.X <= newParam.X + newParam.Size &&
-                                                                        f.Y >= newParam.Y && f.Y <= newParam.Y + newParam.Size)));
-                }
-            }
-        }
-
-        //TODO: add function IsSubfield to minimize IsIntersections calls
-        public IEnumerable<Square> GetIntersections(int left, int right, int top, int bottom)
-        {
-            var squares = new List<Square>();
-
-            foreach(var child in _children)
-            {
-                if (child.IsLeaf)
-                {
-                    if(child.IsIntersected(left, right, top, bottom))
-                        squares.Add(child);
-                }
-                else
-                    squares.AddRange(child.GetIntersections(left, right, top, bottom));
-            }
-
-            return squares;
-        }
-
-        private bool IsIntersected(int left, int right, int top, int bottom)
-        {
-            return IsBeerween(left, right, _xLeft) && IsBeerween(top, bottom, _yTop) ||
-                   IsBeerween(left, right, _xLeft + _size) && IsBeerween(top, bottom, _yTop) ||
-                   IsBeerween(left, right, _xLeft) && IsBeerween(top, bottom, _yTop + _size) ||
-                   IsBeerween(left, right, _xLeft + _size) && IsBeerween(top, bottom, _yTop + _size);
-        }
-
-        private bool IsBeerween(int start, int end, double value)
-        {
-            return start <= value && value <= end;
         }
     }
 }
